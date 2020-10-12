@@ -19,6 +19,7 @@
 package org.wso2.esb.integration.common.extensions.carbonserver;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,6 +63,8 @@ public class CarbonServerManager {
     private String coverageDumpFilePath;
     private int portOffset = 0;
     private static final String SERVER_SHUTDOWN_MESSAGE = "Halting JVM";
+    private static final String EXECUTABLES = "executables";
+    private static final String MANAGEMENT_PORT = "managementPort";
     private static final long DEFAULT_START_STOP_WAIT_MS = 1000 * 60 * 5;
     private static final String CMD_ARG = "cmdArg";
     private static int defaultHttpsPort = Integer.parseInt(FrameworkConstants.SERVER_DEFAULT_HTTPS_PORT);
@@ -79,6 +82,9 @@ public class CarbonServerManager {
         if (process != null) { // An instance of the server is running
             log.warn("Tried to start a new server when there is one already running");
             return;
+        }
+        if (commandMap.containsKey(EXECUTABLES)) {
+            updateFilePermissions(commandMap);
         }
         portOffset = getPortOffsetFromCommandMap(commandMap);
 
@@ -144,7 +150,12 @@ public class CarbonServerManager {
                 }
             }));
 
-            managementPort = 9154 + portOffset;
+            if (commandMap.containsKey(MANAGEMENT_PORT)) {
+                managementPort = Integer.parseInt(commandMap.get(MANAGEMENT_PORT)) + portOffset;
+            } else {
+                managementPort = 9154 + portOffset;
+            }
+
             waitTill(() -> !isRemotePortInUse("localhost", managementPort), 180, "startup");
 
             if (!isRemotePortInUse("localhost", managementPort)) {
@@ -419,6 +430,14 @@ public class CarbonServerManager {
         } else {
             return ArrayUtils.addAll(parameterArray, cmdParaArray);
         }
+    }
+
+    private void updateFilePermissions(Map<String, String> commandMap) {
+
+        String[] executableFiles = commandMap.get(EXECUTABLES).trim().split(",");
+        Arrays.stream(executableFiles).map(file -> file.replace('/', File.separatorChar)).map(
+                file -> carbonHome + File.separator + file.trim()).forEach(
+                fileName -> new File(fileName).setExecutable(true));
     }
 
     private int getPortOffsetFromCommandMap(Map<String, String> commandMap) {
