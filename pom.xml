@@ -117,6 +117,11 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.osgi</artifactId>
+                <version>${version.equinox.platform}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.ei</groupId>
                 <artifactId>org.wso2.micro.integrator.initializer</artifactId>
                 <version>${project.version}</version>
@@ -450,7 +455,11 @@
                 <artifactId>pax-logging-api</artifactId>
                 <version>${pax.logging.api.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-log4j2</artifactId>
+                <version>${pax.logging.log4j2.version}</version>
+            </dependency>
             <!--TODO Temporary dependencies. Must clean later-->
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -1324,6 +1333,7 @@
         <version.equinox.osgi.services>3.3.100.v20130513-1956</version.equinox.osgi.services>
         <version.equinox.http.helper>1.1.0.wso2v1</version.equinox.http.helper>
         <version.equinox.p2.metadata>2.2.0.v20130523-1557</version.equinox.p2.metadata>
+        <version.equinox.platform>3.14.0</version.equinox.platform>
 
         <openjpa.version>2.2.2</openjpa.version>
         <openjpa.version.wso2>2.2.2.wso2v2</openjpa.version.wso2>
