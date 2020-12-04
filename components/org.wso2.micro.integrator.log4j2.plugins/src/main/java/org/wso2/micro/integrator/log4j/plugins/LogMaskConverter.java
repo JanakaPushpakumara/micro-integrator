@@ -47,8 +47,6 @@ public class LogMaskConverter extends LogEventPatternConverter {
     private static final LogMaskConverter INSTANCE = new LogMaskConverter();
     private static final String DEFAULT_MASKING_PATTERNS_FILE_NAME = "wso2-log-masking.properties";
     private static final String MASK_PATTERN = "mm";
-    private static final String DEFAULT_MASKING_REPLACE_PATTERN = ".";
-    private static final String DEFAULT_MASKING_REPLACER = "*****";
     private static final String REPLACE_PATTERN = ".replace_pattern";
     private static final String REPLACER = ".replacer";
 
@@ -138,14 +136,19 @@ public class LogMaskConverter extends LogEventPatternConverter {
      * This class represents the masking information.
      */
     public class LogMaskInfoProvider {
+
         private Pattern logMaskingPattern;
-        private Pattern logReplacementPattern = Pattern.compile(DEFAULT_MASKING_REPLACE_PATTERN);
-        private String logReplacementString = DEFAULT_MASKING_REPLACER;
+        private Pattern logReplacementPattern = Pattern.compile(".");
+        private String logReplacementString = "*";
 
         LogMaskInfoProvider(String logMaskingPattern, String logReplacementPattern, String logReplacementString) {
             this.logMaskingPattern = Pattern.compile(logMaskingPattern);
             if (Objects.nonNull(logReplacementPattern)) {
                 this.logReplacementPattern = Pattern.compile(logReplacementPattern);
+            } else {
+                if (Objects.isNull(logReplacementString)) {
+                    this.logReplacementString = "*****";
+                }
             }
             if (Objects.nonNull(logReplacementString)) {
                 this.logReplacementString = logReplacementString;
