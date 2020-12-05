@@ -16,6 +16,8 @@
 
 package org.wso2.micro.integrator.log4j.plugins;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.pattern.ConverterKeys;
@@ -43,6 +45,8 @@ import java.util.regex.Pattern;
  * Converter key mm used to change existing message pattern in log4j2.properties
  */
 public class LogMaskConverter extends LogEventPatternConverter {
+
+    private static final Log log = LogFactory.getLog(LogMaskConverter.class);
 
     private static final LogMaskConverter INSTANCE = new LogMaskConverter();
     private static final String DEFAULT_MASKING_PATTERNS_FILE_NAME = "wso2-log-masking.properties";
@@ -78,12 +82,16 @@ public class LogMaskConverter extends LogEventPatternConverter {
                 Pattern pattern = maskingInfo.logMaskingPattern;
                 matcher = pattern.matcher(message);
                 StringBuffer stringBuffer = new StringBuffer();
+                Pattern replacementPattern = maskingInfo.logReplacementPattern;
                 while (matcher.find()) {
-                    String subStringToMask = message.substring(matcher.start(), matcher.end());
-                    Pattern replacementPattern = maskingInfo.logReplacementPattern;
-                    replaceMatcher = replacementPattern.matcher(subStringToMask);
-                    subStringToMask = replaceMatcher.replaceAll(maskingInfo.logReplacementString);
-                    matcher.appendReplacement(stringBuffer, subStringToMask);
+                    if (Objects.isNull(replacementPattern)) {
+                        matcher.appendReplacement(stringBuffer, maskingInfo.logReplacementString);
+                    } else {
+                        String subStringToMask = message.substring(matcher.start(), matcher.end());
+                        replaceMatcher = replacementPattern.matcher(subStringToMask);
+                        subStringToMask = replaceMatcher.replaceAll(maskingInfo.logReplacementString);
+                        matcher.appendReplacement(stringBuffer, subStringToMask);
+                    }
                 }
                 matcher.appendTail(stringBuffer);
                 message = stringBuffer.toString();
@@ -108,7 +116,7 @@ public class LogMaskConverter extends LogEventPatternConverter {
                 properties.load(propsStream);
 
                 for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                    if (((String) entry.getKey()).contains(REPLACE_PATTERN) || ((String) entry.getKey()).contains(
+                    if (((String) entry.getKey()).endsWith(REPLACE_PATTERN) || ((String) entry.getKey()).endsWith(
                             REPLACER)) {
                         continue;
                     }
@@ -121,7 +129,7 @@ public class LogMaskConverter extends LogEventPatternConverter {
             }
         } catch (IOException e) {
             // If the masking patterns cannot be loaded print an error message.
-            System.err.println("Error loading the masking patterns, due to : " + e.getMessage());
+            log.error("Error loading the masking patterns, due to : " + e.getMessage(), e);
         } finally {
             if (propsStream != null) {
                 try {
@@ -138,17 +146,13 @@ public class LogMaskConverter extends LogEventPatternConverter {
     public class LogMaskInfoProvider {
 
         private Pattern logMaskingPattern;
-        private Pattern logReplacementPattern = Pattern.compile(".");
-        private String logReplacementString = "*";
+        private Pattern logReplacementPattern;
+        private String logReplacementString = "*****";
 
         LogMaskInfoProvider(String logMaskingPattern, String logReplacementPattern, String logReplacementString) {
             this.logMaskingPattern = Pattern.compile(logMaskingPattern);
             if (Objects.nonNull(logReplacementPattern)) {
                 this.logReplacementPattern = Pattern.compile(logReplacementPattern);
-            } else {
-                if (Objects.isNull(logReplacementString)) {
-                    this.logReplacementString = "*****";
-                }
             }
             if (Objects.nonNull(logReplacementString)) {
                 this.logReplacementString = logReplacementString;
