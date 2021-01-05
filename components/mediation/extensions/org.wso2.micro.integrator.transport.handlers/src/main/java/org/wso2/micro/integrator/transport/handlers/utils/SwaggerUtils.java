@@ -67,6 +67,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.wso2.micro.application.deployer.AppDeployerUtils.createRegistryKey;
+
 /**
  * Util class with methods to generate swagger definition and fetch them from the registry.
  */
@@ -306,7 +308,7 @@ public final class SwaggerUtils {
         SynapseConfiguration synapseConfig =
                 SynapseConfigUtils.getSynapseConfiguration(Constants.SUPER_TENANT_DOMAIN_NAME);
         Registry registry = synapseConfig.getRegistry();
-        OMNode regContent = registry.lookup(resourcePath);
+        OMNode regContent = registry.lookup(createRegistryKey(resourcePath));
 
         if (regContent instanceof OMText) {
             defString = ((OMText) regContent).getText();
