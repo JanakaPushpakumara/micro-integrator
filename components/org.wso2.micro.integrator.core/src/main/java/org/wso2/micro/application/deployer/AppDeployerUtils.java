@@ -67,6 +67,11 @@ public final class AppDeployerUtils {
 	private static String APP_UNZIP_DIR;
 	private static final String INTERNAL_ARTIFACTS_DIR = "internal-artifacts";
 	private static volatile boolean isAppDirCreated = false;
+
+	private static final String GOV_REGISTRY_PATH = "/_system/governance";
+	private static final String GOV_REGISTRY_PREFIX = "gov:";
+	private static final String CONFIG_REGISTRY_PATH = "/_system/config";
+	private static final String CONFIG_REGISTRY_PREFIX = "conf:";
 	
 	private AppDeployerUtils() {
 		// hide utility class
@@ -743,5 +748,25 @@ public final class AppDeployerUtils {
             return null;
         }
         return props;
+    }
+
+    /**
+     * Function to create registry key from registry path
+     *
+     * @param key key of the resource
+     * @return
+     */
+    public static String createRegistryKey(String key) {
+        String updatedKey;
+        if (key.startsWith(GOV_REGISTRY_PATH)) {
+            updatedKey = GOV_REGISTRY_PREFIX + key.substring(19);
+        } else if (key.startsWith(CONFIG_REGISTRY_PATH)) {
+            updatedKey = CONFIG_REGISTRY_PREFIX + key.substring(15);
+        } else {
+            //Consider default as governance registry
+            updatedKey = GOV_REGISTRY_PREFIX + key;
+        }
+        return updatedKey;
+
     }
 }
