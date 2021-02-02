@@ -56,7 +56,7 @@ import org.apache.synapse.config.SynapseConfiguration;
 import org.apache.synapse.registry.Registry;
 import org.apache.synapse.rest.API;
 import org.apache.synapse.rest.version.DefaultStrategy;
-import org.wso2.carbon.integrator.core.json.utils.GSONUtils;
+import org.wso2.micro.integrator.core.json.utils.GSONUtils;
 import org.wso2.carbon.mediation.commons.rest.api.swagger.GenericApiObjectDefinition;
 import org.wso2.carbon.mediation.commons.rest.api.swagger.SwaggerConstants;
 import org.wso2.micro.core.Constants;
