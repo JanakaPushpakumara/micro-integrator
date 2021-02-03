@@ -50,10 +50,6 @@ public class SpecialCharEscapeWithReplaceTest extends ESBIntegrationTest {
         serverConfigurationManager.applyMIConfigurationWithRestart(new File(getESBResourceLocation()
                 + File.separator + "payloadFactory" + File.separator + "replace" + File.separator + "deployment.toml"));
         super.init();
-        loadESBConfigurationFromClasspath(
-                File.separator + "artifacts" + File.separator + "ESB" + File.separator + "synapseconfig"
-                        + File.separator + "payloadmediatype" + File.separator
-                        + "SpecialCharEscapeWithReplaceTest.xml");
     }
 
     @AfterClass(alwaysRun = true)
