@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/workOrderAPI" name="workOrderAPI" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST">
+        <inSequence>
+            <property expression="json-eval($)" name="inboundJsonPayload" scope="default" type="STRING"/>
+            <property name="messageType" scope="axis2" value="application/json"/>
+            <property name="ContentType" scope="axis2" value="application/json"/>
+            <payloadFactory media-type="json">
+                <format>
+                    {
+                        "message":{
+                            "workorderjson": "$1"
+                        }
+                    }
+                </format>
+                <args>
+                    <arg evaluator="xml" expression="replace($ctx:inboundJsonPayload, '&quot;' , '\\&quot;')"/>
+                </args>
+            </payloadFactory>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>
