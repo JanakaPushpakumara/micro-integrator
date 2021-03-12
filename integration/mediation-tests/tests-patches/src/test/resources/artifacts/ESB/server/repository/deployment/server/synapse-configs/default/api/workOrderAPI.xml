@@ -14,7 +14,7 @@
                     }
                 </format>
                 <args>
-                    <arg evaluator="xml" expression="replace($ctx:inboundJsonPayload, '&quot;' , '\\&quot;')"/>
+                    <arg evaluator="xml" expression="replace($ctx:inboundJsonPayload, '&quot;' , '\\&quot;')" literal="true"/>
                 </args>
             </payloadFactory>
             <respond/>
