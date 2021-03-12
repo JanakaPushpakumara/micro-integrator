@@ -47,7 +47,7 @@ public class PropertyIntegrationGetFilePropertyTestCase extends ESBIntegrationTe
         carbonLogReader.clearLogs();
         SimpleHttpClient simpleHttpClient = new SimpleHttpClient();
         simpleHttpClient.doGet(getProxyServiceURLHttp("propertyMediatorFilePropertyTestProxy"), null);
-        boolean responseStatus = carbonLogReader.checkForLog("testFileProperty = testValue", DEFAULT_TIMEOUT);
+        boolean responseStatus = carbonLogReader.checkForLog("testFileProperty = PropertyIntegrationGetFilePropertyTestCaseValue", DEFAULT_TIMEOUT);
         assertTrue(responseStatus, "Error retrieving the property from file.properties config file.");
     }
 }
